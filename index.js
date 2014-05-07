@@ -20,6 +20,15 @@ function Store(config) {
 }
 
 
+/**
+ * .context (obj)
+ *
+ * Extend the context with the given object.
+ *
+ * @param {String} name
+ * @param {String} str
+ */
+
 Store.prototype.context = function (obj) {
   this._context = _.extend(this._config, obj);
 };
@@ -83,6 +92,7 @@ Store.prototype.parse = function (url, name) {
 };
 
 
+
 var route = new Store();
 
 // Store some routes (structures)
@@ -92,73 +102,6 @@ route.set('dateUrl', 'blog/posts/:year/:month/:day/:basename/section/index.:ext'
 route.set('pretty', ':basename/index.html');
 route.set('numbered', ':num-basename.:ext');
 
-// _.map(_.keys(pages), function (pageKey) {
-//   params.set(pageKey, pages[pageKey].data);
-// })
-
-// route.get('pageDest', params.get(pageKey));
-
-// console.log(route.get('pretty'));
-// console.log(route.get('date'));
-
-// console.log(route.stringify('pretty', {basename: 'jon'}));
-// console.log(route.stringify('date', {year: '2014', month: '05', day: '04', basename: 'interesting'}));
-
-// var result = route.parse('https://assemble.io/blog/posts/2014/05/04/inter.esting/foo/bar/baz/index.html?=foo', 'dateUrl');
 var result = route.parse('https://assemble.io/blog/posts/2014/05/04/foo/bar/baz/index.html?=foo', 'dateUrl');
+var result = route.parse('https://assemble.io/blog/posts/2014-05-04/foo/bar/baz/index.html?=foo', 'dateUrl');
 console.log(result);
-
-
-// params.set('dateFoo', 'date', {destBase: 'foo'});
-// params.set('dateBar', 'date', {destBase: 'bar'});
-
-
-// route.set('dateUrl', 'blog/posts/:year/:month/:day/[foo/bar/baz]/:basename/[section/foo]/index.:ext');
-// console.log(route.get('dateUrl'));
-
-// console.log(route.stringify('dateUrl', {
-//   year: '2014',
-//   month: '05',
-//   day: '04',
-//   basename: 'interesting',
-//   ext: 'html'
-// }));
-
-
-// var dateParams = function(cwd, destBase) {
-//   return {
-//     cwd: 'content/posts',
-//     destBase: 'blog/posts'
-//     params: {
-//       props: {
-//         year: /\d{4}/, // :year
-//         month: /\d{2}/,
-//         day: /\d{2}/
-//       },
-//       patterns: {
-//         foo:     // :foo
-//       }
-//     }
-//   }
-// }
-
-
-// parser.set('date', dateParams(''));
-
-// var dateParser = parser.get('date');
-
-// 'blog/posts/:year/:month/:day/["foo|bar"]/:basename/[section/foo]/index.:ext'
-
-
-
-// * exact match
-// * prop-string
-// * anything in between
-
-
-
-// var route1 = router.set('/news/{id}');
-
-// route1.match('/foo/bar');      // false
-// route1.match('/news/123');     // true
-// route1.match('/news/foo-bar'); // true
