@@ -25,9 +25,6 @@ describe('rte:', function() {
   });
 
   describe('when a configuration is passed in', function () {
-
-    var src = 'vendor/bootstrap/dist/js/bootstrap.js';
-
     var config = {
       flatten: false,
       prefixBase: false,
@@ -41,6 +38,7 @@ describe('rte:', function() {
     };
 
     var route = new Route(config);
+    var src = 'vendor/bootstrap/dist/js/bootstrap.js';
     route.set('date', ':destBase/:year/:month/:day/js/:basename:ext');
 
 
@@ -68,6 +66,27 @@ describe('rte:', function() {
         var expected = '_gh_pages/public/2014/05/08/js/bootstrap.min.js';
         expect(actual).to.eql(expected);
       });
+    });
+  });
+
+
+  describe('rte.stringify()', function() {
+    var rte = new Route({
+      dirname: 'foo',
+      basename: 'index',
+      ext: '.html'
+    });
+    rte.set('one', ':dirname/:basename:ext');
+    rte.set('two', ':dirname/foo/bar/baz/:basename:ext');
+
+    it('should return a string using the named structure', function() {
+      var actual = rte.stringify('one');
+      expect(actual).to.eql('foo/index.html');
+    });
+
+    it('should return a string using the named structure', function() {
+      var actual = rte.stringify('two');
+      expect(actual).to.eql('foo/foo/bar/baz/index.html');
     });
   });
 });
