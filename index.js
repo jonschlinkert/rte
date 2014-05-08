@@ -57,7 +57,7 @@ Route.prototype.get = function (name) {
  */
 
 Route.prototype.stringify = function (name, context) {
-  return permalinks(this._structure[name], context || this._context);
+  return permalinks(this._structure[name], context || this._config);
 };
 
 
@@ -71,14 +71,20 @@ function rename(dest, options) {
     last: /(\.[^\/\.]*)?$/
   };
 
+  dest = dest.replace(cwd, '');
+
   // Flatten path?
   if (options.flatten) {
-    dest = path.basename(dest);
+    dest = options.basename;
   }
 
   // Change the extension?
-  if (options.ext) {
+  if (options.extDot) {
     dest = dest.replace(re[options.extDot], options.ext);
+  }
+
+  if (options.ext) {
+    dest = dest.replace(options.filename, options.basename + options.ext);
   }
 
   // If cwd and prefixBase were specified, prefix cwd to dest
@@ -96,10 +102,6 @@ function rename(dest, options) {
 
 
 
-Route.prototype._calculateDest = function (filepath) {
-  return _.extend(this._config, {dest: rename(filepath, this._config)});
-};
-
 
 /**
  * .parse (url, name)
@@ -111,31 +113,62 @@ Route.prototype._calculateDest = function (filepath) {
  * @param {String} name  The structure to use
  */
 
-Route.prototype.parse = function (filepath, options) {
-  _.extend(this._config, options, parsePath(filepath));
-  return this._calculateDest(filepath);
+//Route.prototype.parse = function (filepath, options) {
+//  var parsedPath = parsePath(filepath);
+//  parsedPath.basename = parsedPath.name;
+//  var ctx = _.extend(parsedPath, this._config, options);
+//  return _.extend(ctx, {dest: this.dest(filepath, ctx)});
+//};
+
+Route.prototype.parse = function (filepath, name, options) {
+
+  var src = filepath;
+  var parser = this.dest.bind(this);
+  if (name && _.isObject(name)) {
+    options = name;
+    name = null;
+  } else if (name && typeof name === 'string') {
+    src = name;
+    parser = this.stringify.bind(this);
+  }
+
+  // get an object with information about the filepath
+  var parsedPath = parsePath(filepath);
+
+  // set the basename since it's better this way
+  parsedPath.basename = parsedPath.name;
+
+  // extend the context with config and additional options
+  var context = _.extend(parsedPath, this._config, options);
+
+  var dest = parser(src, context);
+  return _.extend(context, {dest: dest});
 };
+
+Route.prototype.dest = function (filepath, options) {
+  return rename(filepath, options);
+};
+
 
 module.exports = Route;
 
 
-var config = {
-  flatten: true,
-  prefixBase: false,
-  cwd: 'blog/posts',
-  extDot: 'last',
-  destBase: '_gh_pages'
-};
+//var config = {
+//  flatten: true,
+//  prefixBase: false,
+//  cwd: 'blog/posts',
+//  extDot: 'last',
+//  destBase: '_gh_pages'
+//};
 
-var route = new Route(config);
+//var route = new Route(config);
 
-// // Route some routes (structures)
-// route.set('default', ':base([^:year])/:year/:month/:day/:basename/index.html');
-// route.set('date', 'blog/posts/:year/:month/:day/:basename/index.html');
-// route.set('dateUrl', 'blog/posts/:year/:month/:day/:basename/section/index.:ext');
-// route.set('pretty', ':basename/index.html');
-// route.set('numbered', ':num-basename.:ext');
+//// // Route some routes (structures)
+//// route.set('default', ':base([^:year])/:year/:month/:day/:basename/index.html');
+//// route.set('dateUrl', 'blog/posts/:year/:month/:day/:basename/section/index.:ext');
+//// route.set('pretty', ':basename/index.html');
+//// route.set('numbered', ':num-basename.:ext');
 
-var result = route.parse('blog/posts/2014/05/04/foo/bar/baz/index.md.html');
-console.log(route);
+//var result = route.parse('blog/posts/2014/05/04/foo/bar/baz/index.md.html');
+//console.log(result);
 
