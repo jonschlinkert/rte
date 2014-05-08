@@ -7,7 +7,8 @@
   */
 
 var expect = require('chai').expect;
-var rte = require('../');
+var Route = require('../');
+var rte = new Route();
 
 describe('rte:', function() {
   describe('paths', function() {
@@ -19,7 +20,7 @@ describe('rte:', function() {
         ext: '.html'
       };
       var actual = rte.parse('foo/index.html');
-      expect(actual).to.eql(expected);
+      expect(actual.dir).to.eql('foo');
     });
   });
 });

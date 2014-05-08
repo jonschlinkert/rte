@@ -1,12 +1,12 @@
+var path = require('path');
 var permalinks = require('permalinks');
+var parsePath = require('parse-filepath');
 var _ = require('lodash');
-
-var utils = require('./lib/utils');
 
 
 
 /**
- * Store
+ * Route
  *
  * Constructor for a simple prop-string data
  * model object.
@@ -14,25 +14,10 @@ var utils = require('./lib/utils');
  * @param {String} type
  */
 
-function Store(config) {
+function Route(config) {
   this._config = _.extend(config || {});
   this._structure = {};
 }
-
-
-/**
- * .context (obj)
- *
- * Extend the context with the given object.
- *
- * @param {String} name
- * @param {String} str
- */
-
-Store.prototype.context = function (obj) {
-  this._context = _.extend(this._config, obj);
-};
-
 
 /**
  * .set (key, value)
@@ -43,7 +28,7 @@ Store.prototype.context = function (obj) {
  * @param {String} str
  */
 
-Store.prototype.set = function (name, str) {
+Route.prototype.set = function (name, str) {
   this._structure[name] = str;
 };
 
@@ -56,7 +41,7 @@ Store.prototype.set = function (name, str) {
  * @param {String} key
  */
 
-Store.prototype.get = function (name) {
+Route.prototype.get = function (name) {
   return this._structure[name];
 };
 
@@ -71,10 +56,49 @@ Store.prototype.get = function (name) {
  * @param {Object} context
  */
 
-Store.prototype.stringify = function (name, context) {
+Route.prototype.stringify = function (name, context) {
   return permalinks(this._structure[name], context || this._context);
 };
 
+
+function rename(dest, options) {
+  options = options || {};
+  var cwd = options.cwd || options.srcBase || process.cwd();
+
+  var pathSeparatorRe = /[\/\\]/g;
+  var re = {
+    first: /(\.[^\/]*)?$/,
+    last: /(\.[^\/\.]*)?$/
+  };
+
+  // Flatten path?
+  if (options.flatten) {
+    dest = path.basename(dest);
+  }
+
+  // Change the extension?
+  if (options.ext) {
+    dest = dest.replace(re[options.extDot], options.ext);
+  }
+
+  // If cwd and prefixBase were specified, prefix cwd to dest
+  if (cwd && options.prefixBase) {
+    dest = path.join(cwd, dest);
+  }
+
+  // Join dest and destBase?
+  if (options.destBase) {
+    dest = path.join(options.destBase, dest);
+  }
+
+  return dest.replace(/\\/g, '/');
+}
+
+
+
+Route.prototype._calculateDest = function (filepath) {
+  return _.extend(this._config, {dest: rename(filepath, this._config)});
+};
 
 
 /**
@@ -87,21 +111,31 @@ Store.prototype.stringify = function (name, context) {
  * @param {String} name  The structure to use
  */
 
-Store.prototype.parse = function (url, name) {
-  return utils.parseUrl(url, this._structure[name]);
+Route.prototype.parse = function (filepath, options) {
+  _.extend(this._config, options, parsePath(filepath));
+  return this._calculateDest(filepath);
 };
 
+module.exports = Route;
 
 
-var route = new Store();
+var config = {
+  flatten: true,
+  prefixBase: false,
+  cwd: 'blog/posts',
+  extDot: 'last',
+  destBase: '_gh_pages'
+};
 
-// Store some routes (structures)
-route.set('default', ':base([^:year])/:year/:month/:day/:basename/index.html');
-route.set('date', 'blog/posts/:year/:month/:day/:basename/index.html');
-route.set('dateUrl', 'blog/posts/:year/:month/:day/:basename/section/index.:ext');
-route.set('pretty', ':basename/index.html');
-route.set('numbered', ':num-basename.:ext');
+var route = new Route(config);
 
-var result = route.parse('https://assemble.io/blog/posts/2014/05/04/foo/bar/baz/index.html?=foo', 'dateUrl');
-var result = route.parse('https://assemble.io/blog/posts/2014-05-04/foo/bar/baz/index.html?=foo', 'dateUrl');
-console.log(result);
+// // Route some routes (structures)
+// route.set('default', ':base([^:year])/:year/:month/:day/:basename/index.html');
+// route.set('date', 'blog/posts/:year/:month/:day/:basename/index.html');
+// route.set('dateUrl', 'blog/posts/:year/:month/:day/:basename/section/index.:ext');
+// route.set('pretty', ':basename/index.html');
+// route.set('numbered', ':num-basename.:ext');
+
+var result = route.parse('blog/posts/2014/05/04/foo/bar/baz/index.md.html');
+console.log(route);
+
