@@ -1,8 +1,7 @@
-var path = require('path');
 var permalinks = require('permalinks');
 var parsePath = require('parse-filepath');
 var _ = require('lodash');
-
+var rename = require('./lib/rename');
 
 
 /**
@@ -61,48 +60,6 @@ Route.prototype.stringify = function (name, context) {
 };
 
 
-function rename(dest, options) {
-  options = options || {};
-  var cwd = options.cwd || options.srcBase || process.cwd();
-
-  var pathSeparatorRe = /[\/\\]/g;
-  var re = {
-    first: /(\.[^\/]*)?$/,
-    last: /(\.[^\/\.]*)?$/
-  };
-
-  dest = dest.replace(cwd, '');
-
-  // Flatten path?
-  if (options.flatten) {
-    dest = options.basename;
-  }
-
-  // Change the extension?
-  if (options.extDot) {
-    dest = dest.replace(re[options.extDot], options.ext);
-  }
-
-  if (options.ext) {
-    dest = dest.replace(options.filename, options.basename + options.ext);
-  }
-
-  // If cwd and prefixBase were specified, prefix cwd to dest
-  if (cwd && options.prefixBase) {
-    dest = path.join(cwd, dest);
-  }
-
-  // Join dest and destBase?
-  if (options.destBase) {
-    dest = path.join(options.destBase, dest);
-  }
-
-  return dest.replace(/\\/g, '/');
-}
-
-
-
-
 /**
  * .parse (url, name)
  *
@@ -151,24 +108,3 @@ Route.prototype.dest = function (filepath, options) {
 
 
 module.exports = Route;
-
-
-//var config = {
-//  flatten: true,
-//  prefixBase: false,
-//  cwd: 'blog/posts',
-//  extDot: 'last',
-//  destBase: '_gh_pages'
-//};
-
-//var route = new Route(config);
-
-//// // Route some routes (structures)
-//// route.set('default', ':base([^:year])/:year/:month/:day/:basename/index.html');
-//// route.set('dateUrl', 'blog/posts/:year/:month/:day/:basename/section/index.:ext');
-//// route.set('pretty', ':basename/index.html');
-//// route.set('numbered', ':num-basename.:ext');
-
-//var result = route.parse('blog/posts/2014/05/04/foo/bar/baz/index.md.html');
-//console.log(result);
-
