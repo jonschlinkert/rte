@@ -1,6 +1,6 @@
 {
-  "name": "permalinks",
-  "version": "0.2.1",
+  "name": "rte",
+  "version": "0.0.1",
   "main": [
     "index.js"
   ]

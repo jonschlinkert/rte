@@ -1,6 +1,7 @@
 var permalinks = require('permalinks');
 var parsePath = require('parse-filepath');
 var _ = require('lodash');
+
 var rename = require('./lib/rename');
 
 
@@ -61,50 +62,54 @@ Route.prototype.stringify = function (name, context) {
 
 
 /**
+ * .dest (filepath, options)
+ *
+ * Build a URL string from the properties on the
+ * given object.
+ *
+ * @param {String} filepath
+ * @param {Object} options
+ */
+
+Route.prototype.dest = function (filepath, options) {
+  return rename(filepath, options);
+};
+
+
+/**
  * .parse (url, name)
  *
  * Build a URL string from the properties on the
  * given object.
  *
- * @param {String} url
- * @param {String} name  The structure to use
+ * @param {String} filepath
+ * @param {String} name     The structure to use
+ * @param {Object} options
  */
 
-//Route.prototype.parse = function (filepath, options) {
-//  var parsedPath = parsePath(filepath);
-//  parsedPath.basename = parsedPath.name;
-//  var ctx = _.extend(parsedPath, this._config, options);
-//  return _.extend(ctx, {dest: this.dest(filepath, ctx)});
-//};
-
 Route.prototype.parse = function (filepath, name, options) {
-
-  var src = filepath;
   var parser = this.dest.bind(this);
+  var structure = filepath;
+
   if (name && _.isObject(name)) {
     options = name;
     name = null;
   } else if (name && typeof name === 'string') {
-    src = name;
+    structure = name;
     parser = this.stringify.bind(this);
   }
 
-  // get an object with information about the filepath
+  // parse the filepath into an object using the node.js path module
   var parsedPath = parsePath(filepath);
 
-  // set the basename since it's better this way
+  // set `basename` to not include extension
   parsedPath.basename = parsedPath.name;
 
   // extend the context with config and additional options
   var context = _.extend(parsedPath, this._config, options);
-
-  var dest = parser(src, context);
-  return _.extend(context, {dest: dest});
+  return _.extend(context, {dest: parser(structure, context)});
 };
 
-Route.prototype.dest = function (filepath, options) {
-  return rename(filepath, options);
-};
 
 
 module.exports = Route;
