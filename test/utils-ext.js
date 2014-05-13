@@ -38,6 +38,13 @@ describe('utils.ext()', function() {
       expect(actual).to.eql('');
     });
 
+    describe('and ext is defined in the options:', function() {
+      it('should return the defined ext', function() {
+        var actual = ext(filepath, {ext: '.fez'});
+        expect(actual).to.eql('.fez');
+      });
+    });
+
   });
 
   describe('when a filename with two extensions is passed:', function() {
@@ -56,6 +63,13 @@ describe('utils.ext()', function() {
     it('should return the last extension', function() {
       var actual = ext(filepath, {extDot: 'last'});
       expect(actual).to.eql('.js');
+    });
+
+    describe('and ext is defined in the options:', function() {
+      it('should return the defined ext', function() {
+        var actual = ext(filepath, {ext: '.fez'});
+        expect(actual).to.eql('.fez');
+      });
     });
   });
 
@@ -76,24 +90,40 @@ describe('utils.ext()', function() {
       var actual = ext(filepath, {extDot: 'last'});
       expect(actual).to.eql('.js');
     });
+
+    describe('and ext is defined in the options:', function() {
+      it('should return the defined ext', function() {
+        var actual = ext(filepath, {ext: '.fez'});
+        expect(actual).to.eql('.fez');
+      });
+    });
   });
 
-  describe('when a filename with no extension is passed:', function() {
+  describe('when a filename with no extension is passed to ext:', function() {
     var filepath = 'foo/bar/baz';
 
-    it('should return the full extension', function() {
+    it('should return an empty string', function() {
       var actual = ext(filepath);
       expect(actual).to.eql('');
     });
 
-    it('should return the first extension', function() {
-      var actual = ext(filepath, {extDot: 'first'});
-      expect(actual).to.eql('');
+    describe('and ext is defined in the options:', function() {
+      it('should return the defined ext', function() {
+        var actual = ext(filepath, {ext: '.fez'});
+        expect(actual).to.eql('.fez');
+      });
     });
 
-    it('should return the last extension', function() {
-      var actual = ext(filepath, {extDot: 'last'});
-      expect(actual).to.eql('');
+    describe('and extDot `first` or `last` is defined:', function() {
+      it('should return an empty string', function() {
+        var actual = ext(filepath, {extDot: 'first'});
+        expect(actual).to.eql('');
+      });
+
+      it('should return an empty string', function() {
+        var actual = ext(filepath, {extDot: 'last'});
+        expect(actual).to.eql('');
+      });
     });
   });
 });

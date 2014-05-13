@@ -10,9 +10,11 @@ var expect = require('chai').expect;
 var Route = require('../');
 var rte = new Route();
 
+
+
 describe('rte:', function() {
   describe('paths', function() {
-    it('should replace :basename', function() {
+    xit('should replace :basename', function() {
       var expected = {
         dirname: 'foo',
         basename: 'index',
@@ -21,26 +23,24 @@ describe('rte:', function() {
       var actual = rte.parse('foo/index.html');
       expect(actual.dir).to.eql('foo');
     });
+
+    xit('should replace :basename', function() {
+      var structure = ':dirname/:basename.:ext';
+      var expected = {
+        dirname: 'foo',
+        basename: 'index',
+        ext: '.html'
+      };
+      var context = {first: "brian", last: "woodward"};
+      rte('people/:last/:first/index.html', context);
+
+      // results in:
+      // => 'people/woodward/brian/index.html'
+      var actual = rte.parse('foo/index.html');
+      console.log(actual)
+      // expect(actual.dir).to.eql('foo');
+    });
   });
-
-  // describe('paths', function() {
-  //   it('should replace :basename', function() {
-  //     var structure = ':dirname/:basename.:ext';
-  //     var expected = {
-  //       dirname: 'foo',
-  //       basename: 'index',
-  //       ext: '.html'
-  //     };
-
-  //     var context = {first: "brian", last: "woodward"};
-  //     rte('people/:last/:first/index.html', context);
-
-  //     // results in:
-  //     // => 'people/woodward/brian/index.html'
-  //     var actual = rte.parse('foo/index.html');
-  //     expect(actual.dir).to.eql('foo');
-  //   });
-  // });
 
   describe('when a configuration is passed:', function () {
     var config = {

@@ -20,4 +20,10 @@ describe('rte.parse()', function() {
     expect(actual.basename).to.eql('index');
     expect(actual.extname).to.eql('.html');
   });
+
+  it('should return a string using the named structure', function() {
+    var actual = rte.parse('foo');
+    expect(actual.dirname).to.eql('.');
+    expect(actual.basename).to.eql('foo');
+  });
 });
