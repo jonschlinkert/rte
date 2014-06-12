@@ -12,8 +12,8 @@
   * [Route](#route)
   * [.set ( key, value )](#set-key-value)
   * [.get ( key )](#get-key)
-  * [.stringify ( key, obj )](#stringify-key-obj)
-  * [.rename ( filepath, options )](#rename-filepath-options)
+  * [.stringify ( name, context )](#stringify-name-context)
+  * [.generate ( filepath, options )](#generate-filepath-options)
   * [.parse](#parse)
   * [.dest ( filepath, options )](#dest-filepath-options)
 * [Contributing](#contributing)
@@ -111,12 +111,14 @@ route.get('dest');
 * `return`  
 
 
-### .stringify ( key, obj )
+### .stringify ( name, context )
 
 Build a URL/filepath string from the properties on the given object.
 
 ```js
-route.stringify(filepath, options)
+route.set('dist', ':root/:basename/index.html');
+route.stringify('dist', {root: '_gh_pages', basename: 'foo'});
+//=> '_gh_pages/foo/index.html'
 ```
 
 * `key` {String}:  
@@ -124,12 +126,13 @@ route.stringify(filepath, options)
 * `return`  
 
 
-### .rename ( filepath, options )
+### .generate ( filepath, options )
 
-Build a file path from the properties on the given object.
+Generate a file path using the [generate](lib/generate.js) utility.
 
 ```js
-route.rename (filepath, options)
+route.generate ('a/b/c.hbs', {ext: '.html'})
+//=> 'a/b/c.html'
 ```
 
 * `filepath` {String}:  
@@ -139,7 +142,7 @@ route.rename (filepath, options)
 
 ### .parse
 
-Parse the filepath into an object using the node.js path module.
+Parse the filepath into an object using the named route and the node.js path module.
 
 ```js
 route.parse (filepath, name, options)

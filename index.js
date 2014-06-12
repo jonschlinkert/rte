@@ -3,7 +3,7 @@
 var permalinks = require('permalinks');
 var parsePath = require('parse-filepath');
 var _ = require('lodash');
-var rename = require('./lib/rename');
+var generate = require('./lib/generate');
 
 
 /**
@@ -75,12 +75,14 @@ Route.prototype.get = function (key) {
 
 
 /**
- * ## .stringify (key, obj)
+ * ## .stringify (name, context)
  *
  * Build a URL/filepath string from the properties on the given object.
  *
  * ```js
- * route.stringify(filepath, options)
+ * route.set('dist', ':root/:basename/index.html');
+ * route.stringify('dist', {root: '_gh_pages', basename: 'foo'});
+ * //=> '_gh_pages/foo/index.html'
  * ```
  *
  * @param {String} `key`
@@ -88,18 +90,19 @@ Route.prototype.get = function (key) {
  * @api public
  */
 
-Route.prototype.stringify = function (key, context) {
-  return permalinks(this.rte[key], _.extend({}, this.config, context));
+Route.prototype.stringify = function (name, context) {
+  return permalinks(this.rte[name], _.extend({}, this.config, context));
 };
 
 
 /**
- * ## .rename (filepath, options)
+ * ## .generate (filepath, options)
  *
- * Build a file path from the properties on the given object.
+ * Generate a file path using the [generate](lib/generate.js) utility.
  *
  * ```js
- * route.rename (filepath, options)
+ * route.generate ('a/b/c.hbs', {ext: '.html'})
+ * //=> 'a/b/c.html'
  * ```
  *
  * @param {String} `filepath`
@@ -107,15 +110,15 @@ Route.prototype.stringify = function (key, context) {
  * @api public
  */
 
-Route.prototype.rename = function (filepath, options) {
-  return rename(filepath, options);
+Route.prototype.generate = function (filepath, options) {
+  return generate(filepath, options);
 };
 
 
 /**
  * ## .parse
  *
- * Parse the filepath into an object using the node.js path module.
+ * Parse the filepath into an object using the named route and the node.js path module.
  *
  * ```js
  * route.parse (filepath, name, options)
@@ -128,7 +131,7 @@ Route.prototype.rename = function (filepath, options) {
  */
 
 Route.prototype.parse = function (filepath, name, options) {
-  var parser = this.rename.bind(this);
+  var parser = this.generate.bind(this);
   var rte = filepath;
 
   if (name && _.isObject(name)) {
