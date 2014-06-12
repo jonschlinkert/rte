@@ -57,24 +57,21 @@ describe('rte:', function() {
     describe('and only src is passed in', function () {
       it('should return a basic dest', function() {
         var actual = route.parse(src).dest;
-        var expected = '_gh_pages/public/js/bootstrap.min.js';
-        expect(actual).to.eql(expected);
+        expect(actual).to.eql('_gh_pages/public/js/bootstrap.min.js');
       });
     });
 
     describe('and only src is passed in', function () {
       it('should return a basic dest', function() {
-        var actual = route.parse(src, {extDot: 'last'}).dest;
-        var expected = '_gh_pages/public/js/bootstrap.min.js';
-        expect(actual).to.eql(expected);
+        var actual = route.parse(src, {extDot: 'last'});
+        expect(actual.dest).to.eql('_gh_pages/public/js/bootstrap.min.js');
       });
     });
 
     describe('and a src string and options are passed', function () {
       it('should return a dest with the prefixBase', function() {
-        var actual = route.parse(src, {prefixBase: true}).dest;
-        var expected = '_gh_pages/public/vendor/bootstrap/dist/js/bootstrap.min.js';
-        expect(actual).to.eql(expected);
+        var actual = route.parse(src, {prefixBase: true});
+        expect(actual.dest).to.eql('_gh_pages/public/vendor/bootstrap/dist/js/bootstrap.min.js');
       });
     });
 
@@ -82,8 +79,8 @@ describe('rte:', function() {
     describe('and a src string and options are passed', function () {
       it('should return a dest with the prefixBase', function() {
         var actual = route.parse(src, {flatten: true}).dest;
-        var expected = '_gh_pages/public/bootstrap.min.js';
-        expect(actual).to.eql(expected);
+
+        expect(actual).to.eql('_gh_pages/public/bootstrap.min.js');
       });
     });
 
@@ -91,10 +88,13 @@ describe('rte:', function() {
     describe('and src is passed with a specified `route` key:', function () {
       it('should return a dest formatted based on the route', function() {
         route.set('date', ':destBase/:year/:month/:day/js/:basename:ext');
-        var actual = route.parse(src, 'date').dest;
+
+        var actual = route.parse(src, 'date');
+        //=> _gh_pages/public/2014/06/12/js/bootstrap.js
+
         var year = new Date().getFullYear();
-        var expected = new RegExp(year).test(actual);
-        expect(expected).to.eql(true);
+        expect(new RegExp(year).test(actual.dest)).to.eql(true);
+        expect(actual.dest).to.eql('_gh_pages/public/2014/06/12/js/bootstrap.js');
       });
     });
   });

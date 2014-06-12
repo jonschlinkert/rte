@@ -5,10 +5,11 @@
  * Licensed under the MIT License
  *
  */
+'use strict';
 
 var expect = require('chai').expect;
 var Route = require('../');
-var rte = new Route();
+
 
 describe('rte.parse()', function() {
   var rte = new Route();

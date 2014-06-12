@@ -1,29 +1,24 @@
+'use strict';
+
 var permalinks = require('permalinks');
 var parsePath = require('parse-filepath');
 var _ = require('lodash');
-
 var rename = require('./lib/rename');
-
 
 
 /**
  * ## Route
  *
- * Simple-to-use module for managing server-side
- * routing to complement the node.js path module.
+ * Define a new instance of Route, optionally passing a default context object.
  *
  * **Example**
  *
- * Define a new instance of Route, optionally
- * specifying a default context object;
- *
  * ```js
- * var route = new Route({foo: 'bar'});
+ * var route = new Route({base: 'dist'});
  * ```
  *
  * @class Route
  * @constructor
- * @extends EventEmitter
  * @param {String} `type`
  * @api public
  */
@@ -36,10 +31,11 @@ var Route = module.exports = function Route(config) {
   this.rte = {};
 };
 
+
 /**
  * ## .set (key, value)
  *
- * Sets a route by name.
+ * Set or get a route by name.
  *
  * ```js
  * route.set('dest', ':base/:dirname/:basename/index.html');
@@ -61,10 +57,11 @@ Route.prototype.set = function (key, value) {
 /**
  * ## .get (key)
  *
- * Get the route that is stored in this model.
+ * Get a route by name.
  *
  * ```js
  * route.get('dest');
+ * // ':base/:dirname/:basename/index.html'
  * ```
  *
  * @method get
@@ -83,7 +80,7 @@ Route.prototype.get = function (key) {
  * Build a URL/filepath string from the properties on the given object.
  *
  * ```js
- * route.stringify (filepath, options)
+ * route.stringify(filepath, options)
  * ```
  *
  * @param {String} `key`
@@ -92,17 +89,17 @@ Route.prototype.get = function (key) {
  */
 
 Route.prototype.stringify = function (key, context) {
-  return permalinks(this.rte[key], _.extend(this.config, context));
+  return permalinks(this.rte[key], _.extend({}, this.config, context));
 };
 
 
 /**
- * ## .dest (filepath, options)
+ * ## .rename (filepath, options)
  *
  * Build a file path from the properties on the given object.
  *
  * ```js
- * route.dest (filepath, options)
+ * route.rename (filepath, options)
  * ```
  *
  * @param {String} `filepath`
@@ -110,7 +107,7 @@ Route.prototype.stringify = function (key, context) {
  * @api public
  */
 
-Route.prototype.dest = function (filepath, options) {
+Route.prototype.rename = function (filepath, options) {
   return rename(filepath, options);
 };
 
@@ -125,13 +122,13 @@ Route.prototype.dest = function (filepath, options) {
  * ```
  *
  * @param {String} `filepath`
- * @param {String} `name`    The route to use
+ * @param {String} `name`    The name of the route to use
  * @param {Object} `options`
  * @api public
  */
 
 Route.prototype.parse = function (filepath, name, options) {
-  var parser = this.dest.bind(this);
+  var parser = this.rename.bind(this);
   var rte = filepath;
 
   if (name && _.isObject(name)) {
@@ -150,7 +147,30 @@ Route.prototype.parse = function (filepath, name, options) {
 
   // extend the context with config and additional options
   var context = _.extend(parsedPath, this.config, options);
-  return _.extend(context, {dest: parser(rte, context)});
+
+  return _.extend(context, {
+    dest: parser(rte, context)
+  });
+};
+
+
+/**
+ * ## .dest (filepath, options)
+ *
+ * Facade for `.parse()`, returning only the `dest` value.
+ *
+ * ```js
+ * route.dest (filepath, name, options)
+ * ```
+ *
+ * @param {String} `filepath`
+ * @param {String} `name`    The name of the route to use
+ * @param {Object} `options`
+ * @api public
+ */
+
+Route.prototype.dest = function (filepath, name, options) {
+  return this.parse(filepath, name, options).dest;
 };
 
 
