@@ -10,10 +10,19 @@ var expect = require('chai').expect;
 var Route = require('../');
 
 var rte = new Route();
+rte.set('site', ':root/:basename/index:ext');
+var obj = rte.parse('src/templates/about.hbs', 'site');
 
-
+console.log(obj)
 
 describe('rte.parse()', function() {
+  it('should parse a file path into an object', function() {
+    var actual = rte.parse('foo/index.html');
+    expect(actual.dirname).to.eql('foo');
+    expect(actual.basename).to.eql('index');
+    expect(actual.extname).to.eql('.html');
+  });
+
   it('should parse a file path into an object', function() {
     var actual = rte.parse('foo/index.html');
     expect(actual.dirname).to.eql('foo');

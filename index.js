@@ -121,7 +121,17 @@ Route.prototype.generate = function (filepath, options) {
  * Parse the filepath into an object using the named route and the node.js path module.
  *
  * ```js
- * route.parse (filepath, name, options)
+ * rte.set('site', ':root/:basename/index:ext');
+ *
+ * // use the `site` route to parse the filepath
+ * var obj = rte.parse('src/templates/about.hbs', 'site');
+ * // =>
+ * { basename: 'about',
+ * dirname: 'src/templates',
+ * extname: '.hbs',
+ * name: 'about',
+ * extSegments: [ '.hbs' ],
+ * dest: 'root/about/index.hbs' }
  * ```
  *
  * @param {String} `filepath`
@@ -163,7 +173,11 @@ Route.prototype.parse = function (filepath, name, options) {
  * Facade for `.parse()`, returning only the `dest` value.
  *
  * ```js
- * route.dest (filepath, name, options)
+ * rte.set('site', ':root/:basename/index:ext');
+ *
+ * // use the `site` route to create a dest filepath
+ * var dest = rte.dest('src/templates/about.hbs', 'site');
+ * // => '_gh_pages/about/index.html'
  * ```
  *
  * @param {String} `filepath`
