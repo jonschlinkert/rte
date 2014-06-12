@@ -29,6 +29,18 @@ describe('rte.dest()', function() {
     var rte = new Route();
     rte.set('dest', 'dist/:basename/index.html');
 
+
+    it('should use the route to parse the filepath', function() {
+      var actual = rte.dest('src/templates/about.hbs', 'dest');
+      expect(actual).to.eql('dist/about/index.html');
+    });
+  });
+
+
+  describe('when a route is defined as a second parameter', function() {
+    var rte = new Route();
+    rte.set('dest', 'dist/:basename/index.html');
+
     it('should use the route to parse the filepath', function() {
       var actual = rte.dest('src/templates/about.hbs', 'dest');
       expect(actual).to.eql('dist/about/index.html');

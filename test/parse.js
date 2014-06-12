@@ -13,8 +13,6 @@ var rte = new Route();
 rte.set('site', ':root/:basename/index:ext');
 var obj = rte.parse('src/templates/about.hbs', 'site');
 
-console.log(obj)
-
 describe('rte.parse()', function() {
   it('should parse a file path into an object', function() {
     var actual = rte.parse('foo/index.html');

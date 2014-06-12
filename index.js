@@ -159,11 +159,8 @@ Route.prototype.parse = function (filepath, name, context) {
   parsedPath.basename = parsedPath.name;
 
   // extend the context with context and additional context
-  var context = _.extend({}, parsedPath, this.context, context);
-
-  return _.extend(context, {
-    dest: parser(rte, context)
-  });
+  var ctx = _.extend({}, parsedPath, this.context, context);
+  return _.extend(ctx, {dest: parser(rte, ctx)});
 };
 
 
