@@ -116,7 +116,7 @@ Route.prototype.generate = function (filepath, options) {
 
 
 /**
- * ## .parse
+ * ## .parse (filepath, name, context)
  *
  * Parse the filepath into an object using the named route and the node.js path module.
  *
@@ -136,16 +136,16 @@ Route.prototype.generate = function (filepath, options) {
  *
  * @param {String} `filepath`
  * @param {String} `name`    The name of the route to use
- * @param {Object} `options`
+ * @param {Object} `context` Optionally pass a context with custom properties.
  * @api public
  */
 
-Route.prototype.parse = function (filepath, name, options) {
+Route.prototype.parse = function (filepath, name, context) {
   var parser = this.generate.bind(this);
   var rte = filepath;
 
   if (name && _.isObject(name)) {
-    options = name;
+    context = name;
     name = null;
   } else if (name && typeof name === 'string') {
     rte = name;
@@ -158,8 +158,8 @@ Route.prototype.parse = function (filepath, name, options) {
   // set `basename` to not include extension
   parsedPath.basename = parsedPath.name;
 
-  // extend the context with config and additional options
-  var context = _.extend(parsedPath, this.config, options);
+  // extend the context with config and additional context
+  var context = _.extend(parsedPath, this.config, context);
 
   return _.extend(context, {
     dest: parser(rte, context)
@@ -168,7 +168,7 @@ Route.prototype.parse = function (filepath, name, options) {
 
 
 /**
- * ## .dest (filepath, options)
+ * ## .dest (filepath, name, context)
  *
  * Facade for `.parse()`, returning only the `dest` value.
  *
@@ -182,12 +182,12 @@ Route.prototype.parse = function (filepath, name, options) {
  *
  * @param {String} `filepath`
  * @param {String} `name`    The name of the route to use
- * @param {Object} `options`
+ * @param {Object} `context` Optionally pass a context with custom properties.
  * @api public
  */
 
-Route.prototype.dest = function (filepath, name, options) {
-  return this.parse(filepath, name, options).dest;
+Route.prototype.dest = function (filepath, name, context) {
+  return this.parse(filepath, name, context).dest;
 };
 
 

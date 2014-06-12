@@ -14,8 +14,8 @@
   * [.get ( key )](#get-key)
   * [.stringify ( name, context )](#stringify-name-context)
   * [.generate ( filepath, options )](#generate-filepath-options)
-  * [.parse](#parse)
-  * [.dest ( filepath, options )](#dest-filepath-options)
+  * [.parse ( filepath, name, context )](#parse-filepath-name-context)
+  * [.dest ( filepath, name, context )](#dest-filepath-name-context)
 * [Contributing](#contributing)
 * [Authors](#authors)
 * [License](#license)
@@ -38,10 +38,7 @@ Create a new instance:
 
 ```js
 // optionally pass a default `context`
-var rte = new Route({
-  root: '_gh_pages',
-  ext: '.html'
-});
+var rte = new Route({root: '_gh_pages', ext: '.html'});
 ```
 
 Next, define some routes to use:
@@ -140,7 +137,7 @@ route.generate ('a/b/c.hbs', {ext: '.html'})
 * `return`  
 
 
-### .parse
+### .parse ( filepath, name, context )
 
 Parse the filepath into an object using the named route and the node.js path module.
 
@@ -160,11 +157,11 @@ dest: 'root/about/index.hbs' }
 
 * `filepath` {String}:  
 * `name` {String}: The name of the route to use 
-* `options` {Object}:  
+* `context` {Object}: Optionally pass a context with custom properties. 
 * `return`  
 
 
-### .dest ( filepath, options )
+### .dest ( filepath, name, context )
 
 Facade for `.parse()`, returning only the `dest` value.
 
@@ -178,7 +175,7 @@ var dest = rte.dest('src/templates/about.hbs', 'site');
 
 * `filepath` {String}:  
 * `name` {String}: The name of the route to use 
-* `options` {Object}:  
+* `context` {Object}: Optionally pass a context with custom properties. 
 * `return`
 
 ## Contributing
