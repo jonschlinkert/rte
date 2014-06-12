@@ -23,11 +23,11 @@ var generate = require('./lib/generate');
  * @api public
  */
 
-var Route = module.exports = function Route(config) {
+var Route = module.exports = function Route(context) {
   if (!(this instanceof Route)) {
-    return new Route(config);
+    return new Route(context);
   }
-  this.config = _.extend(config || {});
+  this.context = _.extend(context || {});
   this.rte = {};
 };
 
@@ -91,7 +91,7 @@ Route.prototype.get = function (key) {
  */
 
 Route.prototype.stringify = function (name, context) {
-  return permalinks(this.rte[name], _.extend({}, this.config, context));
+  return permalinks(this.rte[name], _.extend({}, this.context, context));
 };
 
 
@@ -158,8 +158,8 @@ Route.prototype.parse = function (filepath, name, context) {
   // set `basename` to not include extension
   parsedPath.basename = parsedPath.name;
 
-  // extend the context with config and additional context
-  var context = _.extend(parsedPath, this.config, context);
+  // extend the context with context and additional context
+  var context = _.extend({}, parsedPath, this.context, context);
 
   return _.extend(context, {
     dest: parser(rte, context)
