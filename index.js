@@ -5,70 +5,109 @@ var _ = require('lodash');
 var rename = require('./lib/rename');
 
 
-/**
- * Route
- *
- * Constructor for a simple prop-string data
- * model object.
- *
- * @param {String} type
- */
-
-function Route(config) {
-  this._config = _.extend(config || {});
-  this._structure = {};
-}
 
 /**
- * .set (key, value)
+ * ## Route
  *
- * Set a prop-string to be stored by name.
+ * Simple-to-use module for managing server-side
+ * routing to complement the node.js path module.
  *
- * @param {String} name
- * @param {String} str
+ * **Example**
+ *
+ * Define a new instance of Route, optionally
+ * specifying a default context object;
+ *
+ * ```js
+ * var route = new Route({foo: 'bar'});
+ * ```
+ *
+ * @class Route
+ * @constructor
+ * @extends EventEmitter
+ * @param {String} `type`
+ * @api public
  */
 
-Route.prototype.set = function (name, str) {
-  this._structure[name] = str;
+var Route = module.exports = function Route(config) {
+  if (!(this instanceof Route)) {
+    return new Route(config);
+  }
+  this.config = _.extend(config || {});
+  this.rte = {};
+};
+
+/**
+ * ## .set (key, value)
+ *
+ * Sets a route by name.
+ *
+ * ```js
+ * route.set('dest', ':base/:dirname/:basename/index.html');
+ * ```
+ *
+ * @method set
+ * @param {String} `name`
+ * @param {String} `value`
+ * @api public
+ */
+
+Route.prototype.set = function (key, value) {
+  if (_.isUndefined(value)) return this.rte[key];
+  this.rte[key] = value;
+  return this;
 };
 
 
 /**
- * .get (key)
+ * ## .get (key)
  *
- * Get the structure that is stored in this model.
+ * Get the route that is stored in this model.
  *
- * @param {String} key
+ * ```js
+ * route.get('dest');
+ * ```
+ *
+ * @method get
+ * @param {String} `key`
+ * @api public
  */
 
-Route.prototype.get = function (name) {
-  return this._structure[name];
+Route.prototype.get = function (key) {
+  return this.rte[key];
 };
 
 
 /**
- * .build (key, obj)
+ * ## .stringify (key, obj)
  *
- * Build a URL string from the properties on the
- * given object.
+ * Build a URL/filepath string from the properties on the given object.
  *
- * @param {String} name
- * @param {Object} context
+ * ```js
+ * route.stringify (filepath, options)
+ * ```
+ *
+ * @param {String} `key`
+ * @param {Object} `context`
+ * @api public
  */
 
-Route.prototype.stringify = function (name, context) {
-  return permalinks(this._structure[name], context || this._config);
+Route.prototype.stringify = function (key, context) {
+  return permalinks(this.rte[key], _.extend(this.config, context));
 };
 
 
 /**
- * .dest (filepath, options)
+ * ## .dest (filepath, options)
  *
- * Build a URL string from the properties on the
- * given object.
+ * Build a file path from the properties on the given object.
  *
- * @param {String} filepath
- * @param {Object} options
+ * ```js
+ * route.dest (filepath, options)
+ * ```
+ *
+ * @param {String} `filepath`
+ * @param {Object} `options`
+ * @api public
  */
 
 Route.prototype.dest = function (filepath, options) {
@@ -77,25 +116,29 @@ Route.prototype.dest = function (filepath, options) {
 
 
 /**
- * .parse (url, name)
+ * ## .parse
  *
- * Build a URL string from the properties on the
- * given object.
+ * Parse the filepath into an object using the node.js path module.
  *
- * @param {String} filepath
- * @param {String} name     The structure to use
- * @param {Object} options
+ * ```js
+ * route.parse (filepath, name, options)
+ * ```
+ *
+ * @param {String} `filepath`
+ * @param {String} `name`    The route to use
+ * @param {Object} `options`
+ * @api public
  */
 
 Route.prototype.parse = function (filepath, name, options) {
   var parser = this.dest.bind(this);
-  var structure = filepath;
+  var rte = filepath;
 
   if (name && _.isObject(name)) {
     options = name;
     name = null;
   } else if (name && typeof name === 'string') {
-    structure = name;
+    rte = name;
     parser = this.stringify.bind(this);
   }
 
@@ -106,10 +149,9 @@ Route.prototype.parse = function (filepath, name, options) {
   parsedPath.basename = parsedPath.name;
 
   // extend the context with config and additional options
-  var context = _.extend(parsedPath, this._config, options);
-  return _.extend(context, {dest: parser(structure, context)});
+  var context = _.extend(parsedPath, this.config, options);
+  return _.extend(context, {dest: parser(rte, context)});
 };
 
 
-
-module.exports = Route;
+Route.prototype.Route = Route;

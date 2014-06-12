@@ -13,7 +13,7 @@ var rte = new Route();
 describe('rte.parse()', function() {
   var rte = new Route();
 
-  it('should return a string using the named structure', function() {
+  it('should parse a file path into an object', function() {
     var actual = rte.parse('foo/index.html');
 
     expect(actual.dirname).to.eql('foo');
@@ -21,7 +21,7 @@ describe('rte.parse()', function() {
     expect(actual.extname).to.eql('.html');
   });
 
-  it('should return a string using the named structure', function() {
+  it('should parse a file path into an object', function() {
     var actual = rte.parse('foo');
     expect(actual.dirname).to.eql('.');
     expect(actual.basename).to.eql('foo');

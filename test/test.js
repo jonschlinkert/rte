@@ -14,31 +14,31 @@ var rte = new Route();
 
 describe('rte:', function() {
   describe('paths', function() {
-    xit('should replace :basename', function() {
+    it('should replace :basename', function() {
       var expected = {
         dirname: 'foo',
         basename: 'index',
         ext: '.html'
       };
       var actual = rte.parse('foo/index.html');
-      expect(actual.dir).to.eql('foo');
+      expect(actual.basename).to.eql('index');
+      expect(actual.dirname).to.eql('foo');
     });
 
-    xit('should replace :basename', function() {
-      var structure = ':dirname/:basename.:ext';
+    it('should replace :basename', function() {
+      var route = ':dirname/:basename.:ext';
       var expected = {
         dirname: 'foo',
         basename: 'index',
         ext: '.html'
       };
       var context = {first: "brian", last: "woodward"};
-      rte('people/:last/:first/index.html', context);
+      var actual = rte.parse('people/:last/:first/index.html', context);
 
       // results in:
       // => 'people/woodward/brian/index.html'
       var actual = rte.parse('foo/index.html');
-      console.log(actual)
-      // expect(actual.dir).to.eql('foo');
+      expect(actual.dirname).to.eql('foo');
     });
   });
 
@@ -88,8 +88,8 @@ describe('rte:', function() {
     });
 
 
-    describe('and src is passed with a specified `structure` key:', function () {
-      it('should return a dest formatted based on the structure', function() {
+    describe('and src is passed with a specified `route` key:', function () {
+      it('should return a dest formatted based on the route', function() {
         route.set('date', ':destBase/:year/:month/:day/js/:basename:ext');
         var actual = route.parse(src, 'date').dest;
         var year = new Date().getFullYear();

@@ -13,24 +13,24 @@ var rte = new Route();
 describe('rte.parse()', function() {
   var rte = new Route();
 
-  it('should return a string using the named structure', function() {
-    var structure = ':basename/index.html';
-    rte.set('pretty', structure);
+  it('should return a string using the named route', function() {
+    var route = ':basename/index.html';
+    rte.set('pretty', route);
     var actual = rte.get('pretty');
-    expect(actual).to.eql(structure);
+    expect(actual).to.eql(route);
   });
 
-  it('should return a string using the named structure', function() {
-    var structure = 'blog/posts/:year/:month/:day/:basename/section/index.:ext';
-    rte.set('blog', structure);
+  it('should return a string using the named route', function() {
+    var route = 'blog/posts/:year/:month/:day/:basename/section/index.:ext';
+    rte.set('blog', route);
     var actual = rte.get('blog');
-    expect(actual).to.eql(structure);
+    expect(actual).to.eql(route);
   });
 
-  it('should return a string using the named structure', function() {
-    var structure = ':num-basename.:ext';
-    rte.set('numbered', structure);
+  it('should return a string using the named route', function() {
+    var route = ':num-basename.:ext';
+    rte.set('numbered', route);
     var actual = rte.get('numbered');
-    expect(actual).to.eql(structure);
+    expect(actual).to.eql(route);
   });
 });
