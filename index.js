@@ -33,7 +33,7 @@ var Route = module.exports = function Route(context) {
 
 
 /**
- * ## .set (key, value)
+ * ## .set (name, route)
  *
  * Set or get a route by name.
  *
@@ -43,19 +43,19 @@ var Route = module.exports = function Route(context) {
  *
  * @method set
  * @param {String} `name`
- * @param {String} `value`
+ * @param {String} `route`
  * @api public
  */
 
-Route.prototype.set = function (key, value) {
-  if (_.isUndefined(value)) return this.rte[key];
-  this.rte[key] = value;
+Route.prototype.set = function (name, route) {
+  if (_.isUndefined(route)) return this.rte[name];
+  this.rte[name] = route;
   return this;
 };
 
 
 /**
- * ## .get (key)
+ * ## .get (name)
  *
  * Get a route by name.
  *
@@ -65,12 +65,12 @@ Route.prototype.set = function (key, value) {
  * ```
  *
  * @method get
- * @param {String} `key`
+ * @param {String} `name`
  * @api public
  */
 
-Route.prototype.get = function (key) {
-  return this.rte[key];
+Route.prototype.get = function (name) {
+  return this.rte[name];
 };
 
 
@@ -157,6 +157,7 @@ Route.prototype.parse = function (filepath, name, context) {
 
   // set `basename` to not include extension
   parsedPath.basename = parsedPath.name;
+  parsedPath.ext = parsedPath.extname;
 
   // extend the context with context and additional context
   var ctx = _.extend({}, parsedPath, this.context, context);

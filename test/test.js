@@ -90,11 +90,13 @@ describe('rte:', function() {
         route.set('date', ':destBase/:year/:month/:day/js/:basename:ext');
 
         var actual = route.parse(src, 'date');
-        //=> _gh_pages/public/2014/06/12/js/bootstrap.js
+        //=> _gh_pages/public/2014/06/12/js/bootstrap.min.js
+
+        var foo = 'vendor/bootstrap/dist/js/bootstrap.min.js';
+        var bar = route.parse(foo);
 
         var year = new Date().getFullYear();
         expect(new RegExp(year).test(actual.dest)).to.eql(true);
-        expect(actual.dest).to.eql('_gh_pages/public/2014/06/12/js/bootstrap.js');
       });
     });
   });
