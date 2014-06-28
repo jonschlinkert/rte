@@ -2,8 +2,8 @@
 
 var permalinks = require('permalinks');
 var parsePath = require('parse-filepath');
+var rename = require('rename-path');
 var _ = require('lodash');
-var rename = require('./lib/rename');
 
 
 /**

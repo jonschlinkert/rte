@@ -7,13 +7,13 @@
  */
 
 var expect = require('chai').expect;
-var rename = require('../lib/rename');
+var rename = require('rename-path');
 
-describe('utils.rename()', function() {
+describe('rename()', function() {
   describe('when a path is passed:', function() {
     it('should return the extension from options.ext', function() {
       var actual = rename('foo/bar/baz.min.js', {ext: '.foo'});
-      expect(actual).to.eql('foo/bar/baz.min.foo');
+      expect(actual).to.eql('foo/bar/baz.foo');
     });
 
   });
