@@ -7,7 +7,7 @@
  */
 
 var expect = require('chai').expect;
-var ext = require('../lib/ext');
+var ext = require('ext-ext');
 
 describe('utils.ext()', function() {
   describe('when a filename with an extension is passed and options.ext is defined:', function() {

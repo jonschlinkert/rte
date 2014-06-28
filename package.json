@@ -34,6 +34,7 @@
     "verb-tag-jscomments": "^0.1.2"
   },
   "dependencies": {
+    "ext-ext": "^0.1.2",
     "lodash": "^2.4.1",
     "parse-filepath": "^0.2.0",
     "permalinks": "^0.3.0"
