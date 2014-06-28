@@ -1,9 +1,9 @@
 'use strict';
 
-var permalinks = require('permalinks');
 var parsePath = require('parse-filepath');
 var rename = require('rename-path');
 var _ = require('lodash');
+var stringify = require('./lib/stringify');
 
 
 /**
@@ -91,7 +91,7 @@ Route.prototype.get = function (name) {
  */
 
 Route.prototype.stringify = function (name, context) {
-  return permalinks(this.rte[name], _.extend({}, this.context, context));
+  return stringify(this.rte[name], _.extend({}, this.context, context));
 };
 
 
