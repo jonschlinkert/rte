@@ -7,12 +7,12 @@
  */
 
 var expect = require('chai').expect;
-var generate = require('../lib/generate');
+var rename = require('../lib/rename');
 
-describe('utils.generate()', function() {
+describe('utils.rename()', function() {
   describe('when a path is passed:', function() {
     it('should return the extension from options.ext', function() {
-      var actual = generate('foo/bar/baz.min.js', {ext: '.foo'});
+      var actual = rename('foo/bar/baz.min.js', {ext: '.foo'});
       expect(actual).to.eql('foo/bar/baz.min.foo');
     });
 

@@ -3,7 +3,7 @@
 var permalinks = require('permalinks');
 var parsePath = require('parse-filepath');
 var _ = require('lodash');
-var generate = require('./lib/generate');
+var rename = require('./lib/rename');
 
 
 /**
@@ -96,12 +96,12 @@ Route.prototype.stringify = function (name, context) {
 
 
 /**
- * ## .generate (filepath, options)
+ * ## .rename (filepath, options)
  *
- * Generate a file path using the [generate](lib/generate.js) utility.
+ * Generate a file path using the [rename](lib/rename.js) utility.
  *
  * ```js
- * route.generate ('a/b/c.hbs', {ext: '.html'})
+ * route.rename ('a/b/c.hbs', {ext: '.html'})
  * //=> 'a/b/c.html'
  * ```
  *
@@ -110,8 +110,8 @@ Route.prototype.stringify = function (name, context) {
  * @api public
  */
 
-Route.prototype.generate = function (filepath, options) {
-  return generate(filepath, options);
+Route.prototype.rename = function (filepath, options) {
+  return rename(filepath, options);
 };
 
 
@@ -141,7 +141,7 @@ Route.prototype.generate = function (filepath, options) {
  */
 
 Route.prototype.parse = function (filepath, name, context) {
-  var parser = this.generate.bind(this);
+  var parser = this.rename.bind(this);
   var rte = filepath;
 
   if (name && _.isObject(name)) {
