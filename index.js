@@ -2,7 +2,8 @@
 
 var parsePath = require('parse-filepath');
 var rename = require('rename-path');
-var _ = require('lodash');
+var isObject = require('isobject');
+var extend = require('xtend');
 var stringify = require('./lib/stringify');
 
 
@@ -27,7 +28,7 @@ var Route = module.exports = function Route(context) {
   if (!(this instanceof Route)) {
     return new Route(context);
   }
-  this.context = _.extend(context || {});
+  this.context = extend(context || {});
   this.rte = {};
 };
 
@@ -48,7 +49,7 @@ var Route = module.exports = function Route(context) {
  */
 
 Route.prototype.set = function (name, route) {
-  if (_.isUndefined(route)) return this.rte[name];
+  if (!route) return this.rte[name];
   this.rte[name] = route;
   return this;
 };
@@ -90,8 +91,9 @@ Route.prototype.get = function (name) {
  * @api public
  */
 
-Route.prototype.stringify = function (name, context) {
-  return stringify(this.rte[name], _.extend({}, this.context, context));
+Route.prototype.stringify = function (name, options) {
+  var ctx = extend({}, this.context, options);
+  return stringify(this.rte[name], ctx);
 };
 
 
@@ -144,7 +146,7 @@ Route.prototype.parse = function (filepath, name, context) {
   var parser = this.rename.bind(this);
   var rte = filepath;
 
-  if (name && _.isObject(name)) {
+  if (name && isObject(name)) {
     context = name;
     name = null;
   } else if (name && typeof name === 'string') {
@@ -160,8 +162,8 @@ Route.prototype.parse = function (filepath, name, context) {
   parsedPath.ext = parsedPath.extname;
 
   // extend the context with context and additional context
-  var ctx = _.extend({}, parsedPath, this.context, context);
-  return _.extend(ctx, {dest: parser(rte, ctx)});
+  var ctx = extend({}, parsedPath, this.context, context);
+  return extend(ctx, {dest: parser(rte, ctx)});
 };
 
 

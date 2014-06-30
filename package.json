@@ -1,7 +1,7 @@
 {
   "name": "rte",
   "description": "Simple, server-side routing to complement the node.js path module.",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "homepage": "https://github.com/jonschlinkert/rte",
   "author": {
     "name": "Jon Schlinkert",
@@ -36,11 +36,12 @@
   },
   "dependencies": {
     "ext-ext": "^0.1.2",
-    "lodash": "^2.4.1",
+    "isobject": "^0.1.1",
     "normalize-path": "^0.1.0",
     "parse-filepath": "^0.2.0",
     "rename-path": "^0.1.0",
-    "strings": "^0.3.3"
+    "strings": "^0.4.1",
+    "xtend": "^3.0.0"
   },
   "keywords": [
     "blog entry",
