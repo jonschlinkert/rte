@@ -185,18 +185,8 @@ Route.prototype.dest = function (filepath, name, context) {
  */
 
 Route.prototype.process = function (str, context) {
-  // convert `{a}` to es6 valid templates: `${a}`
-  var brace = /\{([^\}]*(?:\.[^\}]*)*)\}/g;
-  // convert `:a` to es6 valid templates: `${a}`
-  var props = /:([^\\\/:${}]+)/g;
-
-  var route = str
-    .replace(brace, '${$1}')
-    .replace(props, '${$1}')
-    .replace('$$', '$');
-
   var ctx = extend({}, this.context, context);
-  return template(route, ctx);
+  return template(this._convertRe(str), ctx);
 };
 
 
@@ -225,6 +215,28 @@ Route.prototype.process = function (str, context) {
 Route.prototype.resolve = function (name, context) {
   var ctx = extend({}, this.context, context);
   return this.process(this.rte[name], ctx);
+};
+
+
+/**
+ * ## ._convertRe
+ *
+ * Convert propstring delimiters into valid Lo-Dash template
+ * delimiters.
+ *
+ * @param  {String} `str`
+ * @return {String}
+ */
+
+Route.prototype._convertRe = function(str) {
+  // convert `{a}` to es6 valid templates: `${a}`
+  var brace = /\{([^\}]*(?:\.[^\}]*)*)\}/g;
+  // convert `:a` to es6 valid templates: `${a}`
+  var props = /:([^\\\/:${}]+)/g;
+  return str
+    .replace(brace, '<%= $1 %>')
+    .replace(props, '<%= $1 %>')
+    .replace('$', '');
 };
 
 

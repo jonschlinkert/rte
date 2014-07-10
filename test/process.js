@@ -7,23 +7,25 @@ var route = new Route();
 
 describe('route()', function() {
   it('should resolve template braces in routes.', function() {
-    var context = {
-      a: 'foo',
-      b: 'bar',
-      c: 'baz'
-    };
+    var context = {a: 'foo', b: 'bar', c: 'baz'};
     var str = '{ a }/{ b }/{ c }'
     expect(route.process(str, context)).to.equal('foo/bar/baz');
   });
 
   it('should resolve template `:propstrings` in routes.', function() {
+    var context = {a: 'foo', b: 'bar', c: 'baz'};
+    var str = ':a/:b/:c';
+    expect(route.process(str, context)).to.equal('foo/bar/baz');
+  });
+
+  it('should resolve nested `:propstrings`.', function () {
     var context = {
+      foo: ':a/:b/:c',
       a: 'foo',
       b: 'bar',
       c: 'baz'
     };
-
-    var str = ':a/:b/:c';
+    var str = ':foo';
     expect(route.process(str, context)).to.equal('foo/bar/baz');
   });
 
