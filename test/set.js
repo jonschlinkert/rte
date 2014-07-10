@@ -18,20 +18,20 @@ describe('rte.parse()', function() {
     var route = ':basename/index.html';
     rte.set('pretty', route);
     var actual = rte.get('pretty');
-    expect(actual).to.eql(route);
+    expect(actual).to.equal(route);
   });
 
   it('should return a string using the named route', function() {
     var route = 'blog/posts/:year/:month/:day/:basename/section/index.:ext';
     rte.set('blog', route);
     var actual = rte.get('blog');
-    expect(actual).to.eql(route);
+    expect(actual).to.equal(route);
   });
 
   it('should return a string using the named route', function() {
     var route = ':num-basename.:ext';
     rte.set('numbered', route);
     var actual = rte.get('numbered');
-    expect(actual).to.eql(route);
+    expect(actual).to.equal(route);
   });
 });

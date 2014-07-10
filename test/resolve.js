@@ -10,37 +10,33 @@ var expect = require('chai').expect;
 var Route = require('../');
 
 
-/**
- * These should pass
- */
-
-describe('rte.stringify()', function() {
-  describe('rte.stringify()', function() {
+describe('rte.resolve()', function() {
+  describe('rte.resolve()', function() {
     var route = new Route();
     route.set('one', ':dirname/:basename:ext');
     route.set('two', ':dirname/foo/bar/baz/:basename:ext');
 
     it('should return a string using the named route', function() {
-      var actual = route.stringify('one', {
+      var actual = route.resolve('one', {
         dirname: 'foo',
         basename: 'index',
         ext: '.html'
       });
-      expect(actual).to.eql('foo/index.html');
+      expect(actual).to.equal('foo/index.html');
     });
 
     it('should return a string using the named route', function() {
-      var actual = route.stringify('two', {
+      var actual = route.resolve('two', {
         dirname: 'foo',
         basename: 'index',
         ext: '.html'
       });
-      expect(actual).to.eql('foo/foo/bar/baz/index.html');
+      expect(actual).to.equal('foo/foo/bar/baz/index.html');
     });
   });
 
 
-  describe('rte.stringify()', function() {
+  describe('rte.resolve()', function() {
     var rte = new Route({
       dirname: 'foo',
       basename: 'index',
@@ -51,13 +47,13 @@ describe('rte.stringify()', function() {
     rte.set('two', ':dirname/foo/bar/baz/:basename:ext');
 
     it('should return a string using the named route', function() {
-      var actual = rte.stringify('one');
-      expect(actual).to.eql('foo/index.html');
+      var actual = rte.resolve('one');
+      expect(actual).to.equal('foo/index.html');
     });
 
     it('should return a string using the named route', function() {
-      var actual = rte.stringify('two');
-      expect(actual).to.eql('foo/foo/bar/baz/index.html');
+      var actual = rte.resolve('two');
+      expect(actual).to.equal('foo/foo/bar/baz/index.html');
     });
   });
 });
