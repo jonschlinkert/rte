@@ -4,24 +4,30 @@
 
 ## Table of Contents
 
+
+
 <!-- toc -->
+
 * [Install](#install)
 * [Tests](#tests)
 * [Getting started](#getting-started)
 * [API](#api)
   * [Route](#route)
-  * [.set ( name, route )](#set-name-route)
-  * [.get ( name )](#get-name)
-  * [.rename ( filepath, options )](#rename-filepath-options)
-  * [.parse ( filepath, name, context )](#parse-filepath-name-context)
-  * [.dest ( filepath, name, context )](#dest-filepath-name-context)
-  * [.process ( name, context )](#process-name-context)
+  * [.set (name, route)](#set-name-route)
+  * [.get (name)](#get-name)
+  * [.rename (filepath, options)](#rename-filepath-options)
+  * [.parse (filepath, name, context)](#parse-filepath-name-context)
+  * [.dest (filepath, name, context)](#dest-filepath-name-context)
+  * [.process (name, context)](#process-name-context)
   * [.resolve](#resolve)
+  * [._convertRe](#convertre)
 * [Contributing](#contributing)
 * [Authors](#authors)
 * [License](#license)
 
 <!-- toc stop -->
+
+
 ## Install
 Install with [npm](npmjs.org):
 
@@ -79,11 +85,10 @@ Define a new instance of Route, optionally passing a default context object.
 var route = new Route({base: 'dist'});
 ```
 
-* `type` {String}:  
-* `return`  
+* `type` {String}   
 
 
-### .set ( name, route )
+### .set (name, route)
 
 Set or get a route by name.
 
@@ -91,12 +96,11 @@ Set or get a route by name.
 route.set('dest', ':base/:dirname/:basename/index.html');
 ```
 
-* `name` {String}:  
-* `route` {String}:  
-* `return`  
+* `name` {String} 
+* `route` {String}   
 
 
-### .get ( name )
+### .get (name)
 
 Get a route by name.
 
@@ -105,11 +109,10 @@ route.get('dest');
 // ':base/:dirname/:basename/index.html'
 ```
 
-* `name` {String}:  
-* `return`  
+* `name` {String}   
 
 
-### .rename ( filepath, options )
+### .rename (filepath, options)
 
 Rename parts of a file path using [rename-path](https://github.com/jonschlinkert/rename-path).
 
@@ -118,12 +121,11 @@ route.rename ('a/b/c.hbs', {ext: '.html'});
 //=> 'a/b/c.html'
 ```
 
-* `filepath` {String}:  
-* `options` {Object}:  
-* `return`  
+* `filepath` {String} 
+* `options` {Object}   
 
 
-### .parse ( filepath, name, context )
+### .parse (filepath, name, context)
 
 Parse the filepath into an object using the named route and the methods
 on the node.js path module. The purpose of this method is to simplify
@@ -164,13 +166,12 @@ which results in:
 }
 ```
 
-* `filepath` {String}:  
+* `filepath` {String} 
 * `name` {String}: The name of the route to use 
-* `context` {Object}: Optionally pass a context with custom properties. 
-* `return`  
+* `context` {Object}: Optionally pass a context with custom properties.   
 
 
-### .dest ( filepath, name, context )
+### .dest (filepath, name, context)
 
 Facade for `.parse()`, returning only the `dest` value.
 
@@ -184,13 +185,12 @@ var dest = rte.dest('src/templates/about.hbs', 'blog');
 // => '_gh_pages/about/index.html'
 ```
 
-* `filepath` {String}:  
+* `filepath` {String} 
 * `name` {String}: The name of the route to use 
-* `context` {Object}: Optionally pass a context with custom properties. 
-* `return`  
+* `context` {Object}: Optionally pass a context with custom properties.   
 
 
-### .process ( name, context )
+### .process (name, context)
 
 Resolve a named route using the properties on the given object.
 
@@ -204,9 +204,8 @@ route.process(':a/:b/:c', {a: 'one', b: 'two', c: 'three'});
 //=> 'one/two/three'
 ```
 
-* `key` {String}:  
-* `context` {Object}:  
-* `return`  
+* `key` {String} 
+* `context` {Object}   
 
 
 ### .resolve
@@ -225,14 +224,20 @@ route.resolve('dist', {foo: '_gh_pages', basename: 'foo'});
 //=> '_gh_pages/foo/index.html'
 ```
 
-* `key` {String}:  
-* `context` {Object}:  
-* `return`  
+* `key` {String} 
+* `context` {Object}   
+
+
+### ._convertRe
+
+Convert propstring delimiters into valid Lo-Dash template
+delimiters.
+
+* `str` {String}  
+* `return` {String} 
 
 
 Expose `Route`
-
-* `return`
 
 ## Contributing
 Find a bug? Have a feature request? Please [create an Issue](https://github.com/jonschlinkert/rte/issues).

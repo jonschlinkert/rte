@@ -185,7 +185,17 @@ Route.prototype.dest = function (filepath, name, context) {
  */
 
 Route.prototype.process = function (str, context) {
-  var ctx = extend({}, this.context, context);
+  context = extend({}, this.context, context);
+
+  var ctx = Object.create(null);
+  for (var key in context) {
+    if (context.hasOwnProperty(key)) {
+      ctx[key] = context[key];
+      if (/[:$<]|\{\w/.test(context[key])) {
+        ctx[key] = this._convertRe(context[key]);
+      }
+    }
+  }
   return template(this._convertRe(str), ctx);
 };
 

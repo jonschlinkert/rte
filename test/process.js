@@ -21,9 +21,15 @@ describe('route()', function() {
   it('should resolve nested `:propstrings`.', function () {
     var context = {
       foo: ':a/:b/:c',
-      a: 'foo',
-      b: 'bar',
-      c: 'baz'
+      a: '<%= aa %>',
+      aa: 'foo',
+      b: '${bb}',
+      bb: 'bar',
+      c: '{cc.dd}',
+      cc: {
+        dd: '${e}'
+      },
+      e: 'baz'
     };
     var str = ':foo';
     expect(route.process(str, context)).to.equal('foo/bar/baz');
