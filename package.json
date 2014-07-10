@@ -1,7 +1,7 @@
 {
   "name": "rte",
   "description": "Simple, server-side routing to complement the node.js path module.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "homepage": "https://github.com/jonschlinkert/rte",
   "author": {
     "name": "Jon Schlinkert",

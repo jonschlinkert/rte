@@ -186,13 +186,14 @@ Route.prototype.dest = function (filepath, name, context) {
 
 Route.prototype.process = function (str, context) {
   // convert `{a}` to es6 valid templates: `${a}`
-  var brace = /\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
+  var brace = /\{([^\}]*(?:\.[^\}]*)*)\}/g;
   // convert `:a` to es6 valid templates: `${a}`
-  var props = /:(\w+)/g;
+  var props = /:([^\\\/:${}]+)/g;
 
   var route = str
     .replace(brace, '${$1}')
-    .replace(props, '${$1}');
+    .replace(props, '${$1}')
+    .replace('$$', '$');
 
   var ctx = extend({}, this.context, context);
   return template(route, ctx);

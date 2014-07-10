@@ -71,4 +71,52 @@ describe('route()', function() {
     var str = ':a/:b/:c/{uppercase(d)}';
     expect(route.process(str, context)).to.equal('foo/bar/baz/BAZ');
   });
+
+  it('should process templates in the filepath.', function() {
+    var context = {
+      a: 'foo',
+      bb: 'bar',
+      b: '<%= bb %>',
+      c: '<%= d %>',
+      d: 'baz',
+      uppercase: function(str) {
+        return str.toUpperCase();
+      }
+    };
+
+    var str = ':a/<%= b %>/:c/{uppercase(d)}';
+    expect(route.process(str, context)).to.equal('foo/bar/baz/BAZ');
+  });
+
+  it('should process es6 templates in the filepath.', function() {
+    var context = {
+      a: 'foo',
+      bb: 'bar',
+      b: '<%= bb %>',
+      c: '<%= d %>',
+      d: 'baz',
+      uppercase: function(str) {
+        return str.toUpperCase();
+      }
+    };
+
+    var str = ':a/${b}/:c/{uppercase(d)}';
+    expect(route.process(str, context)).to.equal('foo/bar/baz/BAZ');
+  });
+
+  it('should process es5 and standard templates in the filepath.', function() {
+    var context = {
+      a: 'foo',
+      bb: 'bar',
+      b: '<%= bb %>',
+      c: '<%= d %>',
+      d: 'baz',
+      uppercase: function(str) {
+        return str.toUpperCase();
+      }
+    };
+
+    var str = ':a/${b}/<%= c %>/{uppercase(d)}';
+    expect(route.process(str, context)).to.equal('foo/bar/baz/BAZ');
+  });
 });
