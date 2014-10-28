@@ -1,7 +1,7 @@
 {
   "name": "rte",
-  "description": "Simple, server-side routing to complement the node.js path module.",
-  "version": "0.3.2",
+  "description": "Simple filepath re-writing for node.js projects. Useful for re-writing paths in grunt/gulp/assemble tasks or plugins.",
+  "version": "0.4.0",
   "homepage": "https://github.com/jonschlinkert/rte",
   "author": {
     "name": "Jon Schlinkert",
@@ -28,26 +28,25 @@
     "test": "mocha -R spec"
   },
   "devDependencies": {
-    "chai": "^1.9.1",
-    "mocha": "^1.18.2",
-    "verb": "^0.2.6",
-    "verb-tag-jscomments": "^0.1.2"
+    "mocha": "*",
+    "should": "^4.1.0",
+    "verb": "^0.2.15",
+    "verb-tag-jscomments": "^0.2.2"
   },
   "dependencies": {
-    "isobject": "^0.1.1",
-    "parse-filepath": "^0.2.2",
-    "rename-path": "^0.1.0",
-    "template": "^0.2.1",
-    "xtend": "^3.0.0"
+    "chalk": "^0.5.1",
+    "mixin-deep": "^0.1.0",
+    "parse-filepath": "^0.3.1"
   },
   "keywords": [
-    "blog entry",
-    "blog post",
+    "blog",
+    "entry",
     "filepath",
     "link",
     "path",
     "permalinks",
-    "permanent link",
+    "permanent",
+    "post",
     "rewrite",
     "rewriting",
     "route",
@@ -55,7 +54,6 @@
     "routing",
     "transformation",
     "uri",
-    "URL rewriting",
     "url",
     "url-routing"
   ]
