@@ -1,257 +1,102 @@
 'use strict';
 
+/**
+ * Module dependencies.
+ */
+
+var chalk = require('chalk');
+var extend = require('mixin-deep');
 var parsePath = require('parse-filepath');
-var rename = require('rename-path');
-var isObject = require('isobject');
-var template = require('template');
-var extend = require('xtend');
-
 
 /**
- * ## Route
+ * Expose `rte`
+ */
+
+module.exports = rte;
+
+/**
+ * Stringify a file path by replacing `:properties` in a template
+ * with values from the given context.
  *
- * Define a new instance of Route, optionally passing a default context object.
- *
- * **Example**
+ * **Examples:**
  *
  * ```js
- * var route = new Route({base: 'dist'});
+ * rte(':a/:b:.c', { a: 'aaa', b: 'bbb', c: 'js' });
+ * //=> 'aaa/bbb/c.js'
  * ```
  *
- * @class Route
- * @constructor
- * @param {String} `type`
+ * When a `source` file path is passed as the first argument, it will
+ * be parsed and the resulting object will merged with the context
+ * object (properties on the context object take precendence).
+ *
+ * ```js
+ * rte('a/b/c.html', ':destbase/:basename', { destbase: 'foo' });
+ * //=> 'foo/c.html'
+ * ```
+ *
+ * @param {String} `src` Optionally pass a source file path to parse.
+ * @param {String} `template` Template for the destination file path with `:properties` to replace.
+ * @param {Object} `context` Object with values to pass to the template.
  * @api public
  */
 
-var Route = module.exports = function Route(context) {
-  if (!(this instanceof Route)) {
-    return new Route(context);
+function rte(src, template, context) {
+  if (arguments.length === 2 && typeof template === 'object') {
+    context = template;
+    template = src;
+    src = null;
   }
-  this.context = extend(context || {});
-  this.rte = {};
-};
-
-
-/**
- * ## .set (name, route)
- *
- * Set or get a route by name.
- *
- * ```js
- * route.set('dest', ':base/:dirname/:basename/index.html');
- * ```
- *
- * @method set
- * @param {String} `name`
- * @param {String} `route`
- * @api public
- */
-
-Route.prototype.set = function (name, route) {
-  if (!route) return this.rte[name];
-  this.rte[name] = route;
-  return this;
-};
-
+  var rte = new Rte(src, context);
+  return rte.process(template);
+}
 
 /**
- * ## .get (name)
- *
- * Get a route by name.
- *
- * ```js
- * route.get('dest');
- * // ':base/:dirname/:basename/index.html'
- * ```
- *
- * @method get
- * @param {String} `name`
- * @api public
- */
-
-Route.prototype.get = function (name) {
-  return this.rte[name];
-};
-
-
-/**
- * ## .rename (filepath, options)
- *
- * Rename parts of a file path using [rename-path](https://github.com/jonschlinkert/rename-path).
+ * Create an instance of Rte with the `src` file path to re-write,
+ * and the `context` object with values to be used for replacing
+ * `:properties`
  *
  * ```js
- * route.rename ('a/b/c.hbs', {ext: '.html'});
- * //=> 'a/b/c.html'
+ * var Rte = require('rte');
+ * var rte = new Rte('foo/bar/baz.hbs');
  * ```
  *
- * @param {String} `filepath`
- * @param {Object} `options`
- * @api public
- */
-
-Route.prototype.rename = function (filepath, options) {
-  return rename(filepath, options);
-};
-
-
-/**
- * ## .parse (filepath, name, context)
- *
- * Parse the filepath into an object using the named route and the methods
- * on the node.js path module. The purpose of this method is to simplify
- * the process of renaming parts of file paths.
- *
- * **Example:**
- *
- * {%= docs("parse") %}
- *
- * @param {String} `filepath`
- * @param {String} `name` The name of the route to use
- * @param {Object} `context` Optionally pass a context with custom properties.
- * @api public
- */
-
-Route.prototype.parse = function (filepath, name, context) {
-  var parser = this.rename.bind(this);
-  var rte = filepath;
-
-  if (name && isObject(name)) {
-    context = name;
-    name = null;
-  } else if (name && typeof name === 'string') {
-    rte = name;
-    // build the stored (named) route
-    parser = this.resolve.bind(this);
-  }
-
-  // parse the filepath into an object using the node.js path module
-  var parsedPath = parsePath(filepath);
-
-  // set `basename` to not include extension
-  parsedPath.basename = parsedPath.name;
-  parsedPath.ext = parsedPath.extname;
-
-  var ctx = extend({}, parsedPath, this.context, context);
-  return extend(ctx, {dest: parser(rte, ctx)});
-};
-
-
-/**
- * ## .dest (filepath, name, context)
- *
- * Facade for `.parse()`, returning only the `dest` value.
- *
- * **Example:**
- *
- * ```js
- * rte.set('blog', ':foo/:basename/index:ext');
- *
- * // use the `blog` route to create a dest filepath
- * var dest = rte.dest('src/templates/about.hbs', 'blog');
- * // => '_gh_pages/about/index.html'
- * ```
- *
- * @param {String} `filepath`
- * @param {String} `name`    The name of the route to use
- * @param {Object} `context` Optionally pass a context with custom properties.
- * @api public
- */
-
-Route.prototype.dest = function (filepath, name, context) {
-  var ctx = extend({}, this.context, context);
-  return this.parse(filepath, name, ctx).dest;
-};
-
-
-/**
- * ## .process (name, context)
- *
- * Resolve a named route using the properties on the given object.
- *
- * ```js
- * route.process (name, context)
- * ```
- * **Example:**
- *
- * ```js
- * route.process(':a/:b/:c', {a: 'one', b: 'two', c: 'three'});
- * //=> 'one/two/three'
- * ```
- *
- * @param {String} `key`
+ * @param {String} `src`
  * @param {Object} `context`
- * @api public
+ * @api private
  */
 
-Route.prototype.process = function (str, context) {
-  context = extend({}, this.context, context);
+function Rte(src, context) {
+  this.context = context || {};
+  this.src = src;
+}
 
-  var ctx = Object.create(null);
-  for (var key in context) {
-    if (context.hasOwnProperty(key)) {
-      ctx[key] = context[key];
-      if (/[:$<]|\{\w/.test(context[key])) {
-        ctx[key] = this._convertRe(context[key]);
-      }
+/**
+ * Process `template` and interpolate `:properties` with values from
+ * the given `context`.
+ *
+ * ```js
+ * rte.process(':destbase/:name.html', { destbase: 'quux' });
+ * //=> 'quux/baz.html'
+ * ```
+ *
+ * @param {String} `template` String with properties to replace.
+ * @param {Object} `context` Object with values to use.
+ * @api private
+ */
+
+Rte.prototype.process = function (template) {
+  var src = this.src ? parsePath(this.src) : {};
+  var ctx = extend({}, src, this.context);
+  var match;
+
+  while (match = /:(\w+)/g.exec(template)) {
+    if (Boolean(ctx[match[1]])) {
+      template = template.replace(match[0], ctx[match[1]]);
+    } else {
+      console.log(chalk.red('rte cannot find a match for: ":' + match[1] + '"'));
+      template = template.replace(match[0], '');
     }
   }
-  return template(this._convertRe(str), ctx);
+
+  return template;
 };
-
-
-/**
- * ## .resolve
- *
- * Resolve a named route using the properties on the given object.
- *
- * ```js
- * route.resolve (name, context)
- * ```
- *
- * **Example:**
- *
- * ```js
- * route.set('dist', ':foo/:basename/index.html');
- * route.resolve('dist', {foo: '_gh_pages', basename: 'foo'});
- * //=> '_gh_pages/foo/index.html'
- * ```
- *
- * @param {String} `key`
- * @param {Object} `context`
- * @api public
- */
-
-Route.prototype.resolve = function (name, context) {
-  var ctx = extend({}, this.context, context);
-  return this.process(this.rte[name], ctx);
-};
-
-
-/**
- * ## ._convertRe
- *
- * Convert propstring delimiters into valid Lo-Dash template
- * delimiters.
- *
- * @param  {String} `str`
- * @return {String}
- */
-
-Route.prototype._convertRe = function(str) {
-  // convert `{a}` to es6 valid templates: `${a}`
-  var brace = /\{([^\}]*(?:\.[^\}]*)*)\}/g;
-  // convert `:a` to es6 valid templates: `${a}`
-  var props = /:([^\\\/:${}]+)/g;
-  return str
-    .replace(brace, '<%= $1 %>')
-    .replace(props, '<%= $1 %>')
-    .replace('$', '');
-};
-
-
-/**
- * Expose `Route`
- */
-
-Route.prototype.Route = Route;
