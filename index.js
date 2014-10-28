@@ -41,7 +41,7 @@ module.exports = rte;
  */
 
 function rte(src, template, context) {
-  if (arguments.length === 2 && typeof template === 'object') {
+  if (typeof template === 'object') {
     context = template;
     template = src;
     src = null;
