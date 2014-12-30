@@ -4,8 +4,7 @@
  * Module dependencies.
  */
 
-var chalk = require('chalk');
-var extend = require('mixin-deep');
+var extend = require('extend-shallow');
 var parsePath = require('parse-filepath');
 
 /**
@@ -13,6 +12,12 @@ var parsePath = require('parse-filepath');
  */
 
 module.exports = rte;
+
+/**
+ * Expose `rte.Rte`
+ */
+
+module.exports.Rte = Rte;
 
 /**
  * Stringify a file path by replacing `:properties` in a template
@@ -90,10 +95,9 @@ Rte.prototype.process = function (template) {
   var match;
 
   while (match = /:(\w+)/g.exec(template)) {
-    if (Boolean(ctx[match[1]])) {
+    if (ctx[match[1]]) {
       template = template.replace(match[0], ctx[match[1]]);
     } else {
-      console.log(chalk.red('rte cannot find a match for: ":' + match[1] + '"'));
       template = template.replace(match[0], '');
     }
   }
