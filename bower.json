@@ -1,7 +1,47 @@
 {
   "name": "rte",
-  "version": "0.4.1",
+  "description": "Simple filepath re-writing for node.js projects. Useful for re-writing paths in grunt/gulp/assemble tasks or plugins.",
+  "repository": "jonschlinkert/rte",
+  "license": "MIT",
+  "homepage": "https://github.com/jonschlinkert/rte",
+  "authors": [
+    {
+      "name": "Jon Schlinkert",
+      "homepage": "https://github.com/jonschlinkert"
+    }
+  ],
   "main": [
     "index.js"
+  ],
+  "dependencies": {
+    "extend-shallow": "^0.2.0",
+    "parse-filepath": "^0.5.0"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "should": "*"
+  },
+  "keywords": [
+    "basename",
+    "blog",
+    "directory",
+    "dirname",
+    "ext",
+    "extname",
+    "filepath",
+    "fs",
+    "link",
+    "path",
+    "permalinks",
+    "post",
+    "rename",
+    "rewrite",
+    "rewriting",
+    "route",
+    "routes",
+    "routing",
+    "uri",
+    "url",
+    "url-routing"
   ]
 }
