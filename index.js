@@ -20,8 +20,7 @@ module.exports = rte;
 module.exports.Rte = Rte;
 
 /**
- * Stringify a file path by replacing `:properties` in a template
- * with values from the given context.
+ * Generate a file path from properties on the given object.
  *
  * **Examples:**
  *
@@ -31,8 +30,8 @@ module.exports.Rte = Rte;
  * ```
  *
  * When a `source` file path is passed as the first argument, it will
- * be parsed and the resulting object will merged with the context
- * object (properties on the context object take precendence).
+ * be parsed and the resulting object will merged with the data
+ * object (properties on the data object take precendence).
  *
  * ```js
  * rte('a/b/c.html', ':destbase/:basename', { destbase: 'foo' });
@@ -40,24 +39,22 @@ module.exports.Rte = Rte;
  * ```
  *
  * @param {String} `src` Optionally pass a source file path to parse.
- * @param {String} `template` Template for the destination file path with `:properties` to replace.
- * @param {Object} `context` Object with values to pass to the template.
+ * @param {String} `dest` Template for the destination file path with `:properties` to replace.
+ * @param {Object} `data` Object with values to pass to the dest.
  * @api public
  */
 
-function rte(src, template, context) {
-  if (typeof template === 'object') {
-    context = template;
-    template = src;
-    src = null;
+function rte(src, dest, data) {
+  if (typeof dest === 'object') {
+    data = dest; dest = src;
   }
-  var rte = new Rte(src, context);
-  return rte.process(template);
+  var rte = new Rte(src, data);
+  return rte.stringify(dest);
 }
 
 /**
  * Create an instance of Rte with the `src` file path to re-write,
- * and the `context` object with values to be used for replacing
+ * and the `data` object with values to be used for replacing
  * `:properties`
  *
  * ```js
@@ -66,41 +63,65 @@ function rte(src, template, context) {
  * ```
  *
  * @param {String} `src`
- * @param {Object} `context`
+ * @param {Object} `data`
  * @api private
  */
 
-function Rte(src, context) {
-  this.context = context || {};
-  this.src = src;
+function Rte(path, data) {
+  this.data = data || {};
+  this.path = path;
+  this.data.path = this.path;
 }
 
 /**
- * Process `template` and interpolate `:properties` with values from
- * the given `context`.
+ * Parse a file path into an object.
  *
  * ```js
- * rte.process(':destbase/:name.html', { destbase: 'quux' });
- * //=> 'quux/baz.html'
+ * var parse = new rte.Rte().parse;
+ * parse('a/b.html');
+ *
+ * // Results in:
+ * // { dirname: 'a/b',
+ * //   basename: 'c.coffee',
+ * //   name: 'c',
+ * //   extname: '.coffee',
+ * //   extSegments: [ '.coffee' ] }
  * ```
  *
- * @param {String} `template` String with properties to replace.
- * @param {Object} `context` Object with values to use.
+ * @param {String} `path` Path to parse.
  * @api private
  */
 
-Rte.prototype.process = function (template) {
-  var src = this.src ? parsePath(this.src) : {};
-  var ctx = extend({}, src, this.context);
-  var match;
+Rte.prototype.parse = function (path) {
+  return parsePath(path || this.path);
+};
 
-  while (match = /:(\w+)/g.exec(template)) {
-    if (ctx[match[1]]) {
-      template = template.replace(match[0], ctx[match[1]]);
-    } else {
-      template = template.replace(match[0], '');
-    }
+/**
+ * Process `path` and resolve template variables using values from the
+ * given `data`.
+ *
+ * ```js
+ * rte.stringify(':foo/:name.html', { foo: 'quux' });
+ * //=> 'quux/baz.html'
+ * ```
+ *
+ * @param {String} `path` Dest path with variables to replace.
+ * @param {Object} `data` Object with properties used to replace variables in the path.
+ * @api private
+ */
+
+Rte.prototype.stringify = function (path, data) {
+  if (typeof path !== 'string') {
+    data = path; path = this.path;
   }
 
-  return template;
+  var ctx = extend({}, this.parse(), this.data, data);
+
+  return path.replace(/:(\w+)/g, function (_, prop) {
+    var val = ctx[prop] || '';
+    if (typeof val === 'function') {
+      return val.call(this, prop, ctx);
+    }
+    return val;
+  }.bind(this));
 };
