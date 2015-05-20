@@ -23,7 +23,7 @@
     "test": "mocha"
   },
   "dependencies": {
-    "extend-shallow": "^0.2.0",
+    "extend-shallow": "^1.1.2",
     "parse-filepath": "^0.5.0"
   },
   "devDependencies": {
