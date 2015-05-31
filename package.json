@@ -1,7 +1,7 @@
 {
   "name": "rte",
   "description": "Simple filepath re-writing for node.js projects. Useful for re-writing paths in grunt/gulp/assemble tasks or plugins.",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "homepage": "https://github.com/jonschlinkert/rte",
   "author": {
     "name": "Jon Schlinkert",
