@@ -25,7 +25,6 @@ describe('rte:', function() {
     it('should use helpers on the context to replace values:', function() {
       var ctx = {
         a: function (path, context) {
-          console.log(this)
           return 'aaa';
         },
         b: function (path, context) {
